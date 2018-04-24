@@ -10,4 +10,8 @@ The code for BMVC15 submission - leveraging prototypical priors for classificati
 	- prototypically enhanced models -->	prototyp_*.*		
 	- prototypically enhanced ZSL models --> prototyp?_zsl*.*
 
-- The log files of prototypically enhanced model training for GTSD (traffic signs) and BELGA (logo dataset) can be found in the log_files folder.
+- The log files of prototypically enhanced model training can be found in the log_files folder. Details as follows:
+	- GTSD --> german traffic sign dataset
+	- BELGA --> logo dataset
+	- 3888 --> dimensionality of the HoG representation of the prototypical templates
+	- floating point values in the name are the dropout factors used in the network architecture
