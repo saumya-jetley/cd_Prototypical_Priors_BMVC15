@@ -1,0 +1,372 @@
+name: "DNN_smallobjects_PROTOTYP_withCrossEntropyLoss"
+
+input: "data"
+input_dim: 1
+input_dim: 3
+input_dim: 48
+input_dim: 48
+
+layers {
+  bottom: "data"
+  top: "conv1_7x7"
+  name: "conv1_7x7"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 100
+    pad: 0
+    kernel_size: 7
+    stride: 1
+    weight_filler {
+      type: "uniform"
+      min: -0.05
+      max: 0.05
+    }
+    bias_filler {
+      type: "uniform"
+      min: -0.05
+      max: 0.05
+    }
+  }
+}
+
+layers {
+  bottom: "conv1_7x7"
+  top: "conv1_7x7"
+  name: "conv1_relu_7x7"
+  type: RELU
+}
+
+layers {
+  bottom: "conv1_7x7"
+  top: "pool1_2x2"
+  name: "pool1_2x2"
+  type: POOLING
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+
+layers {
+  bottom: "pool1_2x2"
+  top: "conv2_4x4"
+  name: "conv2_4x4"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    pad: 0
+    stride: 1
+    num_output: 150
+    kernel_size: 4
+    weight_filler {
+      type: "uniform"
+      min: -0.05
+      max: 0.05
+    }
+    bias_filler {
+      type: "uniform"
+      min: -0.05
+      max: 0.05
+    }
+  }
+}
+
+layers {
+  bottom: "conv2_4x4"
+  top: "conv2_4x4"
+  name: "conv2_relu_4x4"
+  type: RELU
+}
+
+layers {
+  bottom: "conv2_4x4"
+  top: "pool2_2x2"
+  name: "pool2_2x2"
+  type: POOLING
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+
+layers {
+  bottom: "pool2_2x2"
+  top: "conv3_4x4"
+  name: "conv3_4x4"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 250
+    pad: 0
+    stride: 1
+    kernel_size: 4
+    weight_filler {
+      type: "uniform"
+      min: -0.05
+      max: 0.05
+    }
+    bias_filler {
+      type: "uniform"
+      min: -0.05
+      max: 0.05
+    }
+  }
+}
+
+layers {
+  bottom: "conv3_4x4"
+  top: "conv3_4x4"
+  name: "conv3_relu_4x4"
+  type: RELU
+}
+
+layers {
+  bottom: "conv3_4x4"
+  top: "pool3_2x2"
+  name: "pool3_2x2"
+  type: POOLING
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+
+layers{
+  bottom: "pool3_2x2"
+  top: "fc4"
+  name: "fc4"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param{
+  num_output: 300
+  weight_filler {
+      type: "uniform"
+      min: -0.05
+      max: 0.05
+    }
+  bias_filler {
+      type: "uniform"
+      min: -0.05
+      max: 0.05
+    }
+}
+}
+
+layers {
+bottom: "fc4"
+top: "fc4"
+name: "relu4"
+type: RELU
+}
+
+layers {
+bottom: "fc4"
+top: "fc4"
+name: "drop4"
+type: DROPOUT
+dropout_param {
+dropout_ratio: 0.5
+}
+}
+
+#START intermediate layer for fixed weights ------------
+layers {
+bottom: "fc4"
+top: "inter"
+name: "inter"
+type: INNER_PRODUCT
+blobs_lr: 1
+blobs_lr: 2
+weight_decay: 1
+weight_decay: 0
+inner_product_param {
+num_output: 3888
+weight_filler {
+    type: "uniform"
+    min: -0.05
+    max: 0.05
+    }
+bias_filler {
+    type: "uniform"
+    min: -0.05
+    max: 0.05
+  }
+}
+}
+
+layers {
+bottom: "inter"
+top: "inter"
+name: "drop_inter"
+type: DROPOUT
+dropout_param {
+dropout_ratio: 0.3
+}
+}
+#END intermediate layer for fixed weights ------------
+
+layers {
+bottom: "inter"
+top: "fc5"
+name: "fixed_weights"
+type: INNER_PRODUCT
+blobs_lr: 0
+blobs_lr: 0
+weight_decay: 0
+weight_decay: 0
+inner_product_param {
+num_output: 43 #change here
+}
+}
+
+#at the train time--------------------
+#slice
+layers{
+bottom: "fc5"
+name: "slicer"
+type: SLICE
+top:"part1"
+top:"rem1"
+top:"part2"
+top:"rem2"
+top:"part4"
+top:"rem4"
+top:"part5"
+top:"rem5"
+top:"part8"
+top:"rem8"
+top:"part9"
+top:"rem9"
+top:"part10"
+top:"rem10"
+top:"part11"
+slice_param{
+slice_dim:1
+slice_point:4
+slice_point:5
+slice_point:9
+slice_point:11
+slice_point:20
+slice_point:21
+slice_point:23
+slice_point:26
+slice_point:28
+slice_point:29
+slice_point:31
+slice_point:32
+slice_point:34
+slice_point:35
+}
+}
+
+#layers{
+#bottom:"rem1"
+#bottom:"rem2"
+#bottom:"rem4"
+#bottom:"rem5"
+#bottom:"rem8"
+#bottom:"rem9"
+#bottom:"rem10"
+#name: "silence_train"
+#type: SILENCE
+#include: { phase: TRAIN }
+#}
+
+#layers{
+#name: "concat_train"
+#type: CONCAT
+#bottom:"part1"
+#bottom:"part2"
+#bottom:"part4"
+#bottom:"part5"
+#bottom:"part8"
+#bottom:"part9"
+#bottom:"part10"
+#bottom:"part11"
+#top:"fc5_sup_train"
+#concat_param{
+#concat_dim: 1
+#}
+#include: { phase: TRAIN }
+#}
+
+#layers {
+#  name: "loss"
+#  type: SOFTMAX_LOSS
+#  bottom: "fc5_sup_train"
+#  bottom: "label"
+#  top: "loss"
+#include: { phase: TRAIN }
+#}
+
+#at the test time-----------------------
+
+layers{
+bottom:"part1"
+bottom:"part2"
+bottom:"part4"
+bottom:"part5"
+bottom:"part8"
+bottom:"part9"
+bottom:"part10"
+bottom:"part11"
+name: "silence_test"
+type: SILENCE
+#include: { phase: TEST }
+}
+
+layers{
+name: "concat_test"
+type: CONCAT
+bottom:"rem1"
+bottom:"rem2"
+bottom:"rem4"
+bottom:"rem5"
+bottom:"rem8"
+bottom:"rem9"
+bottom:"rem10"
+top:"fc5_sup_test"
+concat_param{
+concat_dim: 1
+}
+#include: { phase: TEST }
+}
+
+layers {
+  name: "prob"
+  type: SOFTMAX
+  bottom: "fc5_sup_test"
+  top: "prob"
+include: { phase: TEST }
+}
+
+
+#layers {
+#  name: "accuracy"
+#  type: ACCURACY
+#  bottom: "fc5"
+#  bottom: "label"
+#  top: "accuracy"
+#include: { phase: TEST }
+#}
+#---------------------------------------
+
+
+
+
