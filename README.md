@@ -5,7 +5,7 @@ The code for BMVC15 submission - leveraging prototypical priors for classificati
 
 - Their categorisation is as follows:
 
-	- baseline models: &nbsp baseline_dnn*.*
-	- baseline ZSL models: 			baseline_zsl*.*
-	- prototypically enhanced models:	prototyp_*.*		
-	- prototypically enhanced ZSL models:	prototyp?_zsl*.*
+	- baseline models -->  baseline_dnn*.*
+	- baseline ZSL models --> 		baseline_zsl*.*
+	- prototypically enhanced models -->	prototyp_*.*		
+	- prototypically enhanced ZSL models --> prototyp?_zsl*.*
