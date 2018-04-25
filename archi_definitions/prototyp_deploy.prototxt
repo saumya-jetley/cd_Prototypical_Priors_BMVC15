@@ -1,4 +1,4 @@
-name: "DNN_smallobjects_PROTOTYP_withCrossEntropyLoss"
+#name: "DNN_smallobjects_PROTOTYP_withCrossEntropyLoss"
 
 input: "data"
 input_dim: 1
